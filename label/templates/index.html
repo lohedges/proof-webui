@@ -1,0 +1,37 @@
+{% load static %}
+
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>PROOF: Filament Labeller</title>
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+
+<body onload="init()">
+<div id="labeller_app">
+	<div class="leftside">
+			Filament labeller.<br/><br/>
+			<input type="submit" value="Clear all labels" id="button" onclick="clearAll(canvas, ctx, true);">
+			<input type="submit" value="Clear last label" id="button" onclick="clearLast(canvas, ctx);">
+			<input type="submit" value="Upload labels" id="button" onclick="upload(canvas, ctx);">
+			<br><br>Line width: <span id="sliderLineWidth"></span>
+			<input type="range" min="1" max="20" value="10" class="slider" id="lineWidthSlider">
+	</div>
+	<div class="rightside">
+		<canvas id="background" height="800" width="800"></canvas>
+		<canvas id="labeller" height="800" width="800"></canvas>
+	</div>
+</div>
+
+<script>
+// Generate a background image for the canvas. Eventually this will be
+// generated programatically within label.js below.
+var micrograph = new Image();
+micrograph.src = "{% static 'test.png' %}"
+</script>
+
+<script type="text/javascript" src="{% static 'label.js' %}">
+</script>
+
+</body>
+</html>
