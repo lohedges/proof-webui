@@ -1,6 +1,9 @@
 // Variables for referencing the background, canvas, and 2dcanvas context.
 var background, canvas, ctx;
 
+// Variable for the background micrograph image.
+var micrograph = new Image();
+
 // Variables to keep track of the mouse position and left-click status.
 var mouseX, mouseY, mouseDown=0;
 
@@ -90,10 +93,53 @@ function clearAll(canvas, ctx, clearPaths)
     }
 }
 
-// Upload the labelled image to the webserver.
-function upload()
+// Return a new micrograph image.
+function newMicrograph(canvas, ctx)
 {
-    var dt = canvas.toDataURL('image/png');
+    clearAll(canvas, ctx, true);
+    randomMicrograph();
+}
+
+// Upload the labelled image to the webserver.
+function upload(canvas, ctx)
+{
+    var dataUrl = canvas.toDataURL('image/png');
+
+    $.get('/label/upload',
+          {index: micrograph.index, dataUrl: dataUrl},
+          function(response)
+          {
+          }
+    );
+
+    clearAll(canvas, ctx, true);
+    randomMicrograph();
+}
+
+// Load a random micrograph.
+function randomMicrograph()
+{
+	$.get('/label/micrograph',
+          {index: 100},
+          function(response)
+          {
+              // Change the background canvas, ensuring that the micrograph has loaded.
+              micrograph.onload = function()
+              {
+                  // Get the specific background and canvas elements from the HTML document.
+                  background = document.getElementById('background');
+
+                  // Draw the micrograph on the background layer.
+                  if (background.getContext)
+                  {
+                      background.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                      background.getContext('2d').drawImage(micrograph, 0, 0);
+                  }
+              }
+              micrograph.src = "../" + response.micrograph;
+              micrograph.index = response.index
+          }
+    );
 }
 
 // Clear the last filament path.
@@ -191,7 +237,7 @@ function getMousePos(e)
         mouseX = e.layerX;
         mouseY = e.layerY;
     }
-    }
+}
 
 // Draw something when a touch start is detected.
 function labeller_touchStart()
@@ -263,9 +309,15 @@ function init()
     background = document.getElementById('background');
     canvas = document.getElementById('labeller');
 
+    // Load a random micrograph.
+    randomMicrograph();
+
     // Draw the micrograph on the background layer.
     if (background.getContext)
+    {
+        background.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
         background.getContext('2d').drawImage(micrograph, 0, 0);
+    }
 
     // If the browser supports the canvas tag, get the 2d drawing context
     // for this canvas.
@@ -286,6 +338,5 @@ function init()
         canvas.addEventListener('touchstart', labeller_touchStart, false);
         canvas.addEventListener('touchend', labeller_touchEnd, false);
         canvas.addEventListener('touchmove', labeller_touchMove, false);
-
     }
 }
