@@ -7,6 +7,7 @@ from random import randint
 
 import base64
 import imageio
+import numpy as np
 import os
 import pickle
 import uuid
@@ -104,7 +105,18 @@ def upload(request):
 
     # Add to the running average.
     if micrograph.num_labels > 1:
+        # Get the current average.
         current_average = pickle.loads(base64.b64decode(micrograph.average))
+
+        # Convert images to one-dimensional NumPy arrays in range 0 to 1.
+        img_array = image.flatten() / 255
+        avg_array = (current_average/micrograph.num_labels).flatten() / 255
+
+        # Work out the "similarity" for this mask.
+        similarity = sum((img_array-avg_array)**2) / len(img_array)
+        micrograph.similarity += similarity
+
+        # Update the running average.
         image += current_average
 
     # Serialize the image and convert to base64.

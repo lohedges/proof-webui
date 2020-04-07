@@ -1,4 +1,5 @@
 django
 django-mysql
 imageio
+numpy
 pillow
