@@ -9,9 +9,13 @@ class Micrograph(models.Model):
     ip_addresses = ListTextField(
                 base_field = models.CharField(max_length=39),
                 help_text = "A list of IP addresses that have uploaded labels "
-                           "for this micrograph."
+                            "for this micrograph."
                 )
     num_labels = models.IntegerField(
             default = 0,
             help_text = "The number of uploaded labels for this micrograph."
+            )
+    average = models.BinaryField(
+            default = b"",
+            help_text = "The average of the micrograph labels."
             )

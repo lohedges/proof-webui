@@ -1,8 +1,12 @@
-// Variables for referencing the background, canvas, and 2dcanvas context.
-var background, canvas, ctx;
+// Variables for referencing the background, foreground, canvas, and 2dcanvas context.
+var background, foreground, canvas, ctx;
 
 // Variable for the background micrograph image.
 var micrograph = new Image();
+
+// Variable for the foreground micrograph labels.
+var average = new Image();
+average.isActive = false;
 
 // Variables to keep track of the mouse position and left-click status.
 var mouseX, mouseY, mouseDown=0;
@@ -120,7 +124,6 @@ function upload(canvas, ctx)
 function randomMicrograph()
 {
 	$.get('/label/micrograph',
-          {index: 100},
           function(response)
           {
               // Change the background canvas, ensuring that the micrograph has loaded.
@@ -137,9 +140,54 @@ function randomMicrograph()
                   }
               }
               micrograph.src = "../" + response.micrograph;
-              micrograph.index = response.index
+              micrograph.index = response.index;
           }
     );
+}
+
+// Toggle displaying the average micrograph labels.
+function toggleAverage()
+{
+    if (!average.isActive)
+    {
+        $.get('/label/average',
+            {index: micrograph.index, average: average.src},
+            function(response)
+            {
+                // Change the foreground canvas, ensuring that the image has loaded.
+                average.onload = function()
+                {
+                    // Get the specific foreground element from the HTML document.
+                    foreground = document.getElementById('foreground');
+
+                    // Draw the average on the foreground layer.
+                    if (foreground.getContext)
+                    {
+                        foreground.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+                        foreground.getContext('2d').drawImage(average, 0, 0);
+                    }
+                }
+                if (response.average != "NULL")
+                {
+                    average.src = "../" + response.average;
+                    average.isActive = true;
+                }
+            }
+        );
+    }
+    else
+    {
+        // Get the specific foreground element from the HTML document.
+        foreground = document.getElementById('foreground');
+
+        // Draw the average on the foreground layer.
+        if (foreground.getContext)
+        {
+            foreground.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        average.isActive = false;
+    }
 }
 
 // Clear the last filament path.

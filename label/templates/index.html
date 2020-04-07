@@ -13,6 +13,7 @@
 			Filament labeller.<br/><br/>
 			<input type="submit" value="Clear all labels" id="button" onclick="clearAll(canvas, ctx, true);">
 			<input type="submit" value="Clear last label" id="button" onclick="clearLast(canvas, ctx);">
+			<input type="submit" value="Toggle average" id="button" onclick="toggleAverage();">
 			<input type="submit" value="New micrograph" id="button" onclick="newMicrograph(canvas, ctx, true);">
 			<input type="submit" value="Upload labels" id="button" onclick="upload(canvas, ctx);">
 			<br><br>Line width: <span id="sliderLineWidth"></span>
@@ -20,6 +21,7 @@
 	</div>
 	<div class="rightside">
 		<canvas id="background" height="800" width="800"></canvas>
+		<canvas id="foreground" height="800" width="800"></canvas>
 		<canvas id="labeller" height="800" width="800"></canvas>
 	</div>
 </div>

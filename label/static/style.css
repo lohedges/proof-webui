@@ -12,7 +12,7 @@
 .leftside {
     float:left;
     width:150px;
-    height:270px;
+    height:310px;
 	background: #d3d3d3;
     padding:10px;
     border-radius:4px;
@@ -33,6 +33,16 @@
 	z-index: 0;
 }
 
+#foreground {
+    float:left
+    height:800px;
+    width:800px;
+    border:2px solid #888;
+    border-radius:4px;
+    position:absolute;
+	z-index: 1;
+}
+
 #labeller {
     float:left;
     height:800px;
@@ -40,7 +50,7 @@
     border:2px solid #888;
     border-radius:4px;
     position:absolute;
-	z-index: 1;
+	z-index: 2;
 }
 
 #button {
