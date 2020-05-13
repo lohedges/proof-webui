@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
@@ -13,6 +14,7 @@ import pickle
 import uuid
 
 from .models import Micrograph
+from .tasks import create_average_mask, process_micrograph_mask
 
 def index(request):
     """
@@ -56,6 +58,7 @@ def micrograph(request):
 
     return JsonResponse(response)
 
+@transaction.atomic
 def upload(request):
     """
     Handle the upload of micrograph filament labels.
@@ -70,65 +73,10 @@ def upload(request):
     # Get the dataURL.
     data_url = request.GET.get("dataUrl")
 
-    # Get the micrograph from the database.
-    micrograph = Micrograph.objects.get(id=str(index))
+    # Call the Celery task to process the upload.
+    process_micrograph_mask.delay(ip, index, data_url)
 
-    # Get the name of the micrograph with no path or extension.
-    name = micrograph.path.split("/")[2].split(".")[0]
-
-    # Increment the number of micrograph labels.
-    micrograph.num_labels += 1
-
-    # Record that this IP address has labelled the micrograph. The IP address
-    # can appear multiple times if they have labelled all of the current m#icrographs.
-    micrograph.ip_addresses.append(ip)
-
-    # Create the directory name for the masks.
-    mask_dir = f"label/masks/{name}"
-
-    # Create a mask directory for this micrograph if it doesn't already exist.
-    if not os.path.isdir(mask_dir):
-        os.makedirs(mask_dir)
-
-    # Create name of the micrograph label mask.
-    mask_name = f"{mask_dir}/" + f"{micrograph.num_labels}".rjust(6, "0") + ".png"
-
-    # Decode the image, convert to grayscale and threshold to create a binary iamge.
-    image = Image.open(BytesIO(base64.b64decode(data_url.split(",")[1])))
-    image = image.convert("L")
-    image = image.point(lambda x: 0 if x>10 else 255, "1")
-    image.save(mask_name)
-
-    # Reload the mask as a NumPy array. Make sure this is a 64-bit int since
-    # we'll be accumulating the data, i.e. it will go beyond the range of 0-255.
-    image = imageio.imread(mask_name).astype("uint64")
-
-    # Add to the running average.
-    if micrograph.num_labels > 1:
-        # Get the current average.
-        current_average = pickle.loads(base64.b64decode(micrograph.average))
-
-        # Convert images to one-dimensional NumPy arrays in range 0 to 1.
-        img_array = image.flatten() / 255
-        avg_array = (current_average/micrograph.num_labels).flatten() / 255
-
-        # Work out the "similarity" for this mask.
-        similarity = sum((img_array-avg_array)**2) / len(img_array)
-        micrograph.similarity += similarity
-
-        # Update the running average.
-        image += current_average
-
-    # Serialize the image and convert to base64.
-    image_bytes = pickle.dumps(image)
-    image_bytes = base64.b64encode(image_bytes)
-
-    # Store the updated average.
-    micrograph.average = image_bytes
-
-    # Save the updated micrograph record.
-    micrograph.save()
-
+    # Dummy response for now.
     response = {}
 
     return JsonResponse(response)
@@ -148,32 +96,8 @@ def average(request):
     # Initialise response dictionary.
     response = {}
 
-    # Get the micrograph in the database.
-    micrograph = Micrograph.objects.get(pk=index)
-
-    # Only process average if a label has been uploaded.
-    if micrograph.num_labels > 0:
-        # Load the current average label.
-        current_average = pickle.loads(base64.b64decode(micrograph.average))
-        current_average = (current_average / micrograph.num_labels).astype("uint8")
-
-        # Delete the existing image.
-        if average:
-            filename = f"label/static/{average.split('static/')[1]}"
-            if os.path.exists(filename):
-                os.remove(filename)
-
-        # Create a random 64-bit integer string for the file.
-        filename = str(uuid.uuid1().int>>64)
-
-        # Write the average labels to disk.
-        imageio.imwrite(f"label/static/{filename}.png", current_average)
-
-        # Insert the micrograph, index, and IP address into the response.
-        response["average"] = f"static/{filename}.png"
-
-    else:
-        response["average"] = "NULL"
+    # Call the Celery task to generate the average mask.
+    response["average"] = create_average_mask.delay(index, average)
 
     return JsonResponse(response)
 

@@ -19,10 +19,7 @@ class Micrograph(models.Model):
             default = b"",
             help_text = "The average of the micrograph labels."
             )
-    similarity = models.FloatField(
+    variance = models.FloatField(
             default = 0.0,
-            help_text = "The 'similarity' of the labelling for this micrograph, "
-                        "i.e. the average squared-distance of each mask from "
-                        "the average mask. A value of zero means perfect "
-                        "agreement between all masks."
+            help_text = "The variance in the labelling for this micrograph."
             )
