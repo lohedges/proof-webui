@@ -1,5 +1,6 @@
 celery
 django
+django-concurrency
 django-mysql
 imageio
 numpy

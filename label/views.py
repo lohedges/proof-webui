@@ -8,6 +8,7 @@ from random import randint
 
 import base64
 import imageio
+import logging
 import numpy as np
 import os
 import pickle
@@ -15,6 +16,8 @@ import uuid
 
 from .models import Micrograph
 from .tasks import create_average_mask, process_micrograph_mask
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     """
@@ -56,9 +59,11 @@ def micrograph(request):
     response["index"] = index
     response["ip"] = ip
 
+    # Log the micrograph and IP address.
+    logger.info(f"Serving micrograph index {index} to IP {ip}")
+
     return JsonResponse(response)
 
-@transaction.atomic
 def upload(request):
     """
     Handle the upload of micrograph filament labels.
@@ -69,6 +74,9 @@ def upload(request):
 
     # Get the index of the micrograph.
     index = request.GET.get("index")
+
+    # Log the the micrograph is being processed.
+    logger.info(f"Processing micrograph index {index} from IP {ip}")
 
     # Get the dataURL.
     data_url = request.GET.get("dataUrl")
