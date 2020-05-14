@@ -22,6 +22,7 @@ micrographs = glob.glob(base + "static/micrographs/*png")
 data = []
 
 # Loop over each micrograph and create a model entry.
+print("Generating micrograph records...")
 for pk, micrograph in enumerate(micrographs):
     micrograph = micrograph.strip(base)
     record = {
@@ -32,6 +33,8 @@ for pk, micrograph in enumerate(micrographs):
                           }
              }
     data.append(record)
+    print(f" {record}")
+print("Done!")
 
 # Dump the JSON data to a fixture file.
 with open(base + "fixtures/micrographs.json", "w") as f:
