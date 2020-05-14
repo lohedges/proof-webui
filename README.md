@@ -66,6 +66,9 @@ Assuming you have RabbitMQ up and running, simply run:
 venv_proof/bin/celery -A proof worker -B -l info
 ```
 
+(Note that this uses a combined queue for both regular and periodic (beat)
+tasks.)
+
 ### Start Django
 
 Finally, start the Django server and point your browser at the URL that is
