@@ -23,15 +23,19 @@ var path = [], paths = [];
 
 // Initalise a slider to allow the user to adjust the line width.
 var slider = document.getElementById("lineWidthSlider");
-var output = document.getElementById("sliderLineWidth");
-output.innerHTML = slider.value;
+var sliderVal = document.getElementById("sliderLineWidth");
+sliderVal.innerHTML = slider.value;
 var lineWidth = slider.value;
+
+// Initalise the drawing mode label.
+var drawingMode = document.getElementById("drawingMode");
+drawingMode.innerHTML = "Freehand";
 
 // Function to dynamically update the line width.
 slider.oninput = function()
 {
-    output.innerHTML = this.value;
-    lineWidth = output.innerHTML;
+    sliderVal.innerHTML = this.value;
+    lineWidth = sliderVal.innerHTML;
     redraw(canvas, ctx);
 }
 
@@ -95,6 +99,9 @@ function clearAll(canvas, ctx, clearPaths)
     {
         paths = [];
     }
+
+    // Update the drawing mode.
+    drawingMode.innerHTML = "Freehand";
 }
 
 // Return a new micrograph image.
@@ -252,12 +259,18 @@ function labeller_mouseDown(e)
                 middleButton = false;
             }
 
+            // Update the drawing mode.
+            drawingMode.innerHTML = "Freehand";
+
             mouseDown = true;
             drawLine(ctx, mouseX, mouseY, true);
         }
 		// Middle-click.
         else if (btnCode == 1)
         {
+            // Update the drawing mode.
+            drawingMode.innerHTML = "Line";
+
             middleButton = true;
             // Make sure we draw a dot for start point.
             drawLine(ctx, mouseX, mouseY, true);
