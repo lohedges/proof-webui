@@ -8,8 +8,8 @@ var micrograph = new Image();
 var average = new Image();
 average.isActive = false;
 
-// Variables to keep track of the mouse position and left-click status.
-var mouseX, mouseY, mouseDown=0;
+// Variables to keep track of the mouse position and status.
+var mouseX, mouseY, mouseDown = false, middleButton = false;
 
 // Variables to keep track of the touch position.
 var touchX, touchY;
@@ -43,9 +43,9 @@ slider.oninput = function()
 //     savePath  Whether to save the current path.
 function drawLine(ctx, x, y, savePath)
 {
-
     // If lastX is not set, set lastX and lastY to the current position.
-    if (lastX == -1) {
+    if (lastX == -1)
+    {
         lastX = x;
         lastY = y;
     }
@@ -232,27 +232,66 @@ function redraw(canvas, ctx)
 }
 
 // Keep track of the mouse button being pressed and draw a dot at current location
-function labeller_mouseDown()
+function labeller_mouseDown(e)
 {
-    mouseDown = true;
-    drawLine(ctx, mouseX, mouseY, true);
+   // Handle different event models
+    var event = e || window.event;
+    var btnCode;
+
+	if ('object' === typeof event)
+    {
+        btnCode = event.button;
+
+        // Left-click.
+        if (btnCode == 0)
+        {
+            // Disable middle-click mode.
+            if (middleButton)
+            {
+                labeller_mouseUp;
+                middleButton = false;
+            }
+
+            mouseDown = true;
+            drawLine(ctx, mouseX, mouseY, true);
+        }
+		// Middle-click.
+        else if (btnCode == 1)
+        {
+            middleButton = true;
+            // Make sure we draw a dot for start point.
+            drawLine(ctx, mouseX, mouseY, true);
+            // Flag that mouse is no-longer down.
+            mouseDown = false;
+            drawLine(ctx, mouseX, mouseY, true);
+        }
+        // Right-click.
+        else if (btnCode == 2)
+        {
+            middleButton = false;
+            labeller_mouseUp();
+        }
+    }
 }
 
 // Keep track of the mouse button being released
 function labeller_mouseUp()
 {
-    mouseDown = false;
-
-    // Reset lastX and lastY to -1 to indicate that they are now invalid,
-    // since we have lifted the "pen".
-    lastX = -1;
-    lastY = -1;
-
-    // Store the path.
-    if (path.length > 0)
+    if (!middleButton)
     {
-        paths.push(path);
-        path = [];
+        mouseDown = false;
+
+        // Reset lastX and lastY to -1 to indicate that they are now invalid,
+        // since we have lifted the "pen".
+        lastX = -1;
+        lastY = -1;
+
+        // Store the path.
+        if (path.length > 0)
+        {
+            paths.push(path);
+            path = [];
+        }
     }
 }
 
@@ -337,7 +376,7 @@ function getTouchPos(e)
     if (!e)
         var e = event;
 
-    if(e.touches)
+    if (e.touches)
     {
         // Only deal with one finger.
         if (e.touches.length == 1)
@@ -386,5 +425,11 @@ function init()
         canvas.addEventListener('touchstart', labeller_touchStart, false);
         canvas.addEventListener('touchend', labeller_touchEnd, false);
         canvas.addEventListener('touchmove', labeller_touchMove, false);
+
+		// Disable context menu on right-click.
+        canvas.oncontextmenu = function (event)
+		{
+			event.preventDefault();
+		}
     }
 }
