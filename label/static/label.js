@@ -9,7 +9,7 @@ var average = new Image();
 average.isActive = false;
 
 // Variables to keep track of the mouse position and status.
-var mouseX, mouseY, mouseDown = false, middleButton = false;
+var mouseX, mouseY, mouseDown = false, mouseRight = false;
 
 // Variables to keep track of the touch position.
 var touchX, touchY;
@@ -252,11 +252,13 @@ function labeller_mouseDown(e)
         // Left-click.
         if (btnCode == 0)
         {
-            // Disable middle-click mode.
-            if (middleButton)
+            // Disable right-click mode.
+            if (mouseRight)
             {
-                labeller_mouseUp;
-                middleButton = false;
+                mouseRight = false;
+                labeller_mouseUp();
+
+                return;
             }
 
             // Update the drawing mode.
@@ -265,24 +267,18 @@ function labeller_mouseDown(e)
             mouseDown = true;
             drawLine(ctx, mouseX, mouseY, true);
         }
-		// Middle-click.
-        else if (btnCode == 1)
+		// Right-click.
+        else if (btnCode == 2)
         {
             // Update the drawing mode.
             drawingMode.innerHTML = "Line";
 
-            middleButton = true;
+            mouseRight = true;
             // Make sure we draw a dot for start point.
             drawLine(ctx, mouseX, mouseY, true);
             // Flag that mouse is no-longer down.
             mouseDown = false;
             drawLine(ctx, mouseX, mouseY, true);
-        }
-        // Right-click.
-        else if (btnCode == 2)
-        {
-            middleButton = false;
-            labeller_mouseUp();
         }
     }
 }
@@ -290,7 +286,7 @@ function labeller_mouseDown(e)
 // Keep track of the mouse button being released
 function labeller_mouseUp()
 {
-    if (!middleButton)
+    if (!mouseRight)
     {
         mouseDown = false;
 
