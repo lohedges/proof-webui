@@ -97,3 +97,27 @@ rm celery*
 find . -path "label/migrations/*.py" -not -name "__init__.py" -delete
 find . -path "label/migrations/*.pyc" -delete
 ```
+
+## Using the filament labeller
+
+![Filament labeller](/label/static/screenshot.png?raw=true)
+
+Filaments can be labelled using mouse or touch input. In mouse mode, two
+different drawing modes are provided:
+
+* Freehand mode allows you to trace the path of a filament by pressing and
+holding the left mouse button. The path is finished when the button is
+lifted.
+* Line modes allows filaments to be labelled via piecewise linear line segments.
+Pressing the right mouse button activates this mode and drops the first line
+marker. Right-clicking on another location will then draw a line from the last
+marker. Simpy repeat the process until the filament is labelled. Left-clicking
+will finish drawing and register the label.
+
+Errors can be corrected by clicking "Clear last label" or "Clear all labels".
+Clicking "Toggle average" will show the average label for the micrograhph,
+averaged over all masks that have been uploaded. Note that nothing will be
+shown if the micrograph has not yet been labelled. If you don't want to label
+the current micrograph, simply click "New micrograph" to get another random
+micrograph. Finally, to upload a completed micgrograph label, click on
+"Upload micrograph".
