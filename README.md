@@ -116,8 +116,8 @@ will finish drawing and register the label.
 
 Errors can be corrected by clicking "Clear last label" or "Clear all labels".
 Clicking "Toggle average" will show the average label for the micrograhph,
-averaged over all masks that have been uploaded. Note that nothing will be
-shown if the micrograph has not yet been labelled. If you don't want to label
+averaged over all masks that have been uploaded. (Note that nothing will be
+shown if the micrograph has not yet been labelled.) If you don't want to label
 the current micrograph, simply click "New micrograph" to get another random
 micrograph. Finally, to upload a completed micgrograph label, click on
 "Upload labels".
