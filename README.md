@@ -82,7 +82,7 @@ The default URL is [http://127.0.0.1:8000](http://127.0.0.1:8000), which,
 depending on your operating system, may open automatically in your browser.
 
 Currently there is no landing page at the default URL and you'll need to
-navigate to [http://127.0.0.1:800/label](http://127.0.0.1:800/label) to
+navigate to [http://127.0.0.1:8000/label](http://127.0.0.1:8000/label) to
 launch the PROOF filament labelling web app.
 
 
