@@ -93,3 +93,10 @@
 	background: #4CAF50;
 	cursor: pointer;
 }
+
+html *
+{
+    font-size: 1em !important;
+    color: #000 !important;
+    font-family: 'Roboto', sans-serif !important;
+}
