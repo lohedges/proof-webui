@@ -11,14 +11,14 @@
 <body onload="init()">
 <div id="labeller_app">
 	<div class="leftside">
-			Filament labeller<br/><br/>
+			&nbsp;&nbsp;&nbsp;Filament labeller<br/><br/>
 			<input type="submit" value="Clear all labels" id="button" onclick="clearAll(canvas, ctx, true);">
 			<input type="submit" value="Clear last label" id="button" onclick="clearLast(canvas, ctx);">
 			<input type="submit" value="Toggle average" id="button" onclick="toggleAverage();">
 			<input type="submit" value="New micrograph" id="button" onclick="newMicrograph(canvas, ctx, true);">
 			<input type="submit" value="Upload labels" id="button" onclick="upload(canvas, ctx);">
-            <br><br>Drawing mode:<br><span id="drawingMode"></span>
-			<br><br>Line width: <span id="sliderLineWidth"></span>
+            <br><br>&nbsp;Drawing mode:<br>&nbsp;&nbsp;<span id="drawingMode"></span>
+            <br><br>&nbsp;Line width:<br>&nbsp;&nbsp;<span id="sliderLineWidth"></span>
 			<input type="range" min="1" max="20" value="10" class="slider" id="lineWidthSlider">
 	</div>
 	<div class="rightside">
