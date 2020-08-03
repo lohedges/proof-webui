@@ -36,6 +36,10 @@ for pk, micrograph in enumerate(micrographs):
     print(f" {record}")
 print("Done!")
 
+# Create the fixtures directory if it doesn't already exist.
+if not os.path.exists(base + "fixtures"):
+    os.makedirs(base + "fixtures")
+
 # Dump the JSON data to a fixture file.
 with open(base + "fixtures/micrographs.json", "w") as f:
     json.dump(data, f, indent=2)

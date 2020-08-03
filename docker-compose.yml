@@ -1,0 +1,33 @@
+version: '3.5'
+services:
+
+  app:
+    build: .
+    image: &app app
+    restart: "no"
+    command: ["./entrypoint.sh"]
+    env_file: &envfile
+      - env.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - broker
+
+  worker:
+    build: .
+    image: *app
+    restart: "no"
+    env_file: *envfile
+    command: ["celery", "-A", "proof", "worker", "-B", "-l", "info"]
+    volumes:
+      - ./app:/app
+    depends_on:
+      - broker
+
+  broker:
+    image: rabbitmq:3
+    env_file: *envfile
+    ports:
+      - 5672:5672

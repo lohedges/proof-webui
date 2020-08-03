@@ -4,6 +4,8 @@ Web UI for the PROOF project.
 
 ## Setup
 
+The following assumes that you're working within the `app` directory.
+
 ### Dependencies
 
 First create a Python 3.7+ virtual environment:
@@ -100,7 +102,7 @@ find . -path "label/migrations/*.pyc" -delete
 
 ## Using the filament labeller
 
-![Filament labeller](/label/static/screenshot.png?raw=true)
+![Filament labeller](/app/label/static/screenshot.png?raw=true)
 
 Filaments can be labelled using mouse or touch input. In mouse mode, two
 different drawing modes are provided:
@@ -121,3 +123,16 @@ shown if the micrograph has not yet been labelled.) If you don't want to label
 the current micrograph, simply click "New micrograph" to get another random
 micrograph. Finally, to upload a completed micgrograph label, click on
 "Upload labels".
+
+# Docker
+
+To run the filament labeller withing a Docker container, simply run:
+
+```bash
+docker-compose up -d
+```
+
+Once again, the labeller can be accessed at [http://127.0.0.1:8000/label](http://127.0.0.1:8000/label).
+
+(Note that this assumes that you have manually added micrographs to the
+`app/label/static/micrographs` directory.)
