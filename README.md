@@ -136,3 +136,15 @@ Once again, the labeller can be accessed at [http://127.0.0.1:8000/label](http:/
 
 (Note that this assumes that you have manually added micrographs to the
 `app/label/static/micrographs` directory.)
+
+To shutdown:
+
+```bash
+docker-compose down
+```
+
+To follow logs:
+
+```bash
+docker-compose logs -f
+```
