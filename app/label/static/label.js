@@ -203,6 +203,14 @@ function clearLast(canvas, ctx)
     // First, clear the canvas.
     clearAll(canvas, ctx, false);
 
+    // Disable right-click mode.
+    // This avoids issues clearing part-labelled paths.
+    if (mouseRight)
+    {
+        mouseRight = false;
+        labeller_mouseUp();
+    }
+
     // Draw all paths apart from most recent path.
     for (var i=0; i<paths.length-1; i++)
     {
@@ -217,9 +225,6 @@ function clearLast(canvas, ctx)
 
     // Remove the last path.
     paths.pop();
-
-    // Update the drawing mode.
-    drawingMode.innerHTML = "Freehand";
 }
 
 // Redraw all paths, e.g. after a change in line width.
