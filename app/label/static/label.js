@@ -204,7 +204,7 @@ function clearLast(canvas, ctx)
     clearAll(canvas, ctx, false);
 
     // Draw all paths apart from most recent path.
-    for (var i = 0; i<paths.length-1; i++)
+    for (var i=0; i<paths.length-1; i++)
     {
         for (var j=0; j<paths[i].length; j++)
         {
@@ -217,6 +217,9 @@ function clearLast(canvas, ctx)
 
     // Remove the last path.
     paths.pop();
+
+    // Update the drawing mode.
+    drawingMode.innerHTML = "Freehand";
 }
 
 // Redraw all paths, e.g. after a change in line width.
@@ -226,7 +229,7 @@ function redraw(canvas, ctx)
     clearAll(canvas, ctx, false);
 
     // Draw all paths.
-    for (var i = 0; i<paths.length; i++)
+    for (var i=0; i<paths.length; i++)
     {
         for (var j=0; j<paths[i].length; j++)
         {
