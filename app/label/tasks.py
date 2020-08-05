@@ -16,7 +16,7 @@ from .models import Micrograph
 logger = logging.getLogger(__name__)
 
 @celery.task
-def process_micrograph_mask(ip, index, data_url):
+def process_micrograph_mask(ip, index, data_url, svg_serialized):
     """
     Process the upload of micrograph filament labels as a background task.
 
@@ -32,6 +32,9 @@ def process_micrograph_mask(ip, index, data_url):
 
     data_url : base64
         The data URL for the micrograph label mask.
+
+    svg_serialized : str
+        The serialized SVG image.
     """
 
     # Get the micrograph from the database.
@@ -55,17 +58,21 @@ def process_micrograph_mask(ip, index, data_url):
         os.makedirs(mask_dir)
 
     # Create name of the micrograph label mask.
-    mask_name = f"{mask_dir}/" + f"{micrograph.num_labels}".rjust(6, "0") + ".png"
+    mask_name = f"{mask_dir}/" + f"{micrograph.num_labels}".rjust(6, "0")
 
     # Decode the image, convert to grayscale and threshold to create a binary iamge.
     image = Image.open(BytesIO(base64.b64decode(data_url.split(",")[1])))
     image = image.convert("L")
     image = image.point(lambda x: 0 if x>10 else 255, "1")
-    image.save(mask_name)
+    image.save(mask_name + ".png")
+
+    # Write the SVG to file.
+    with open(mask_name + ".svg", "w") as f:
+        f.write(svg_serialized)
 
     # Reload the mask as a NumPy array. Make sure this is a 64-bit int since
     # we'll be accumulating the data, i.e. it will go beyond the range of 0-255.
-    image = imageio.imread(mask_name).astype("uint64")
+    image = imageio.imread(mask_name + ".png").astype("uint64")
 
     # Add to the running average.
     if micrograph.num_labels > 1:
@@ -102,7 +109,7 @@ def process_micrograph_mask(ip, index, data_url):
         logger.warning(f"Database concurrency issue for micrograph '{name}'")
 
         # Re-execute the task if the record has been modified.
-        process_micrograph_mask.delay(ip, index, data_url)
+        process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
 
 @celery.task
 def create_average_mask(index, average):

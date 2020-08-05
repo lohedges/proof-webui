@@ -81,8 +81,11 @@ def upload(request):
     # Get the dataURL.
     data_url = request.GET.get("dataUrl")
 
+    # Get the serialized SVG image.
+    svg_serialized = request.GET.get("svgSerialized")
+
     # Call the Celery task to process the upload.
-    process_micrograph_mask.delay(ip, index, data_url)
+    process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
 
     # Dummy response for now.
     response = {}

@@ -1,5 +1,5 @@
 // Variables for referencing the background, foreground, canvas, and 2dcanvas context.
-var background, foreground, canvas, ctx;
+var background, foreground, canvas, ctx, svg_ctx;
 
 // Variable for the background micrograph image.
 var micrograph = new Image();
@@ -116,14 +116,24 @@ function upload(canvas, ctx)
 {
     var dataUrl = canvas.toDataURL('image/png');
 
+    // Draw an SVG representation of the canvas.
+    redraw(canvas, svg_ctx);
+
+    // Serialize the SVG.
+    svgSerialized = (svg_ctx.getSerializedSvg(true));
+
     $.get('/label/upload',
-          {index: micrograph.index, dataUrl: dataUrl},
+          { index: micrograph.index,
+            dataUrl: dataUrl,
+            svgSerialized: svgSerialized
+          },
           function(response)
           {
           }
     );
 
     clearAll(canvas, ctx, true);
+    clearAll(canvas, svg_ctx, true);
     randomMicrograph();
 }
 
@@ -449,4 +459,7 @@ function init()
 			event.preventDefault();
 		}
     }
+
+    // Make a mock canvas context for a SVG representation of the labels.
+    svg_ctx = new C2S(canvas.width, canvas.height);
 }
