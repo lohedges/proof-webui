@@ -106,7 +106,14 @@ function clearAll(canvas, ctx, clearPaths)
     {
         paths = [];
         widths = [];
+
+        // Reset the line width slider.
+        sliderVal.innerHTML = 10;
+        slider.value = 10;
     }
+
+    // Reset to default line width.
+    lineWidth = 10;
 
     // Update the drawing mode.
     drawingMode.innerHTML = "Freehand";
@@ -247,6 +254,11 @@ function clearLast(canvas, ctx)
     // Remove the last path.
     paths.pop();
     widths.pop();
+
+    // Reset the line width slider.
+    sliderVal.innerHTML = 10;
+    slider.value = 10;
+    lineWidth = 10;
 }
 
 // Redraw all paths, e.g. after a change in line width.
