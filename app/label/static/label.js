@@ -19,7 +19,7 @@ var touchX, touchY;
 var lastX, lastY=-1;
 
 // Arrays to store the current filament path and the set of paths.
-var path = [], paths = [];
+var path = [], paths = [], widths = [];
 
 // Initalise a slider to allow the user to adjust the line width.
 var slider = document.getElementById("lineWidthSlider");
@@ -36,6 +36,13 @@ slider.oninput = function()
 {
     sliderVal.innerHTML = this.value;
     lineWidth = sliderVal.innerHTML;
+
+    // Update the most recent line width.
+    if (widths.length > 0)
+    {
+        widths[widths.length-1] = lineWidth;
+    }
+
     redraw(canvas, ctx);
 }
 
@@ -98,6 +105,7 @@ function clearAll(canvas, ctx, clearPaths)
     if (clearPaths)
     {
         paths = [];
+        widths = [];
     }
 
     // Update the drawing mode.
@@ -224,6 +232,9 @@ function clearLast(canvas, ctx)
     // Draw all paths apart from most recent path.
     for (var i=0; i<paths.length-1; i++)
     {
+        // Set the line width for the path.
+        lineWidth = widths[i];
+
         for (var j=0; j<paths[i].length; j++)
         {
             drawLine(ctx, paths[i][j][0], paths[i][j][1], false);
@@ -235,6 +246,7 @@ function clearLast(canvas, ctx)
 
     // Remove the last path.
     paths.pop();
+    widths.pop();
 }
 
 // Redraw all paths, e.g. after a change in line width.
@@ -246,6 +258,9 @@ function redraw(canvas, ctx)
     // Draw all paths.
     for (var i=0; i<paths.length; i++)
     {
+        // Set the line width for the path.
+        lineWidth = widths[i];
+
         for (var j=0; j<paths[i].length; j++)
         {
             drawLine(ctx, paths[i][j][0], paths[i][j][1], false);
@@ -317,6 +332,7 @@ function labeller_mouseUp()
         if (path.length > 0)
         {
             paths.push(path);
+            widths.push(lineWidth);
             path = [];
         }
     }
@@ -374,6 +390,7 @@ function labeller_touchEnd()
 
     // Store the path
     paths.push(path);
+    widths.push(lineWidth);
     path = [];
 }
 

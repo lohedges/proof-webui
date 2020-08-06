@@ -116,6 +116,10 @@ marker. Right-clicking on another location will then draw a line from the last
 marker. Simpy repeat the process until the filament is labelled. Left-clicking
 will finish drawing and register the label.
 
+It is possible to change the line width using the slider on the left-hand
+panel. The width is applied to the last filament that was drawn, allowing
+you to use a different width for each filament.
+
 Errors can be corrected by clicking "Clear last label" or "Clear all labels".
 Clicking "Toggle average" will show the average label for the micrograhph,
 averaged over all masks that have been uploaded. (Note that nothing will be
