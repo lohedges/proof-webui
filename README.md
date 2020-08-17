@@ -121,7 +121,7 @@ panel. The width is applied to the last filament that was drawn, allowing
 you to use a different width for each filament.
 
 Errors can be corrected by clicking "Clear last label" or "Clear all labels".
-Clicking "Toggle average" will show the average label for the micrograhph,
+Clicking "Toggle average" will show the average label for the micrograph,
 averaged over all masks that have been uploaded. (Note that nothing will be
 shown if the micrograph has not yet been labelled.) If you don't want to label
 the current micrograph, simply click "New micrograph" to get another random
