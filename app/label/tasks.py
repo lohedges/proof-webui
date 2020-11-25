@@ -15,7 +15,7 @@ from .models import Micrograph
 
 logger = logging.getLogger(__name__)
 
-@celery.task
+@app.task
 def process_micrograph_mask(ip, index, data_url, svg_serialized):
     """
     Process the upload of micrograph filament labels as a background task.
@@ -111,7 +111,7 @@ def process_micrograph_mask(ip, index, data_url, svg_serialized):
         # Re-execute the task if the record has been modified.
         process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
 
-@celery.task
+@app.task
 def create_average_mask(index, average):
     """
     Write the average mask for a micrograph to disk and return the path to
