@@ -8,6 +8,7 @@ services:
     command: ["./entrypoint.sh"]
     env_file: &envfile
       - env.env
+    user: "${UID}:${GID}"
     ports:
       - "8000:8000"
     volumes:
@@ -20,6 +21,7 @@ services:
     image: *app
     restart: "no"
     env_file: *envfile
+    user: "${UID}:${GID}"
     command: ["celery", "-A", "proof", "worker", "-B", "-l", "info"]
     volumes:
       - ./app:/app

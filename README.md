@@ -136,6 +136,12 @@ To run the filament labeller withing a Docker container, simply run:
 docker-compose up -d
 ```
 
+On Linux/macOS you can run as a your regular user with:
+
+```bash
+UID=$(id -u) GID=$(id -g) docker-compose up -d
+```
+
 Once again, the labeller can be accessed at [http://127.0.0.1:8000/label](http://127.0.0.1:8000/label).
 
 (Note that this assumes that you have manually added micrographs to the
