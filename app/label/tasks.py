@@ -2,7 +2,6 @@ from io import BytesIO
 from PIL import Image, ImageOps
 
 import base64
-import celery
 import imageio
 import logging
 import numpy as np
@@ -11,6 +10,7 @@ import pickle
 import uuid
 
 from proof.celery import app
+from celery.schedules import crontab
 from .models import Micrograph
 
 logger = logging.getLogger(__name__)
@@ -167,7 +167,7 @@ def create_average_mask(index, average):
 def setup_periodic_tasks(sender, **kwargs):
     # Compute the variance for each set of micrograph masks every hour.
     sender.add_periodic_task(
-        celery.schedules.crontab(hour="*", minute=0, day_of_week="*"),
+        crontab(hour="*", minute=0, day_of_week="*"),
         compute_mask_variance.s(),
     )
 
