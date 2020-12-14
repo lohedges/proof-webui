@@ -8,6 +8,8 @@ services:
     command: ["./entrypoint.sh"]
     env_file: &envfile
       - env.env
+    environment:
+      PROOF_CLEAN_START: ${PROOF_CLEAN_START}
     user: "${UID}:${GID}"
     ports:
       - "8000:8000"

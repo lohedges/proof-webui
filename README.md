@@ -94,7 +94,7 @@ If you want to restart from a clean state, simply run the following set of
 commands and re-follow the [Django initialsation](#initialising-django)
 
 ```bash
-rm db.sqlite
+rm db.sqlite3
 rm celery*
 find . -path "label/migrations/*.py" -not -name "__init__.py" -delete
 find . -path "label/migrations/*.pyc" -delete
@@ -157,4 +157,10 @@ To follow logs:
 
 ```bash
 docker-compose logs -f
+```
+
+If you want to start afresh, i.e. delete the micrograph database and any labels, run:
+
+```bash
+PROOF_CLEAN_START=1 docker-compose up -d
 ```
