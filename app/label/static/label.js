@@ -168,7 +168,7 @@ function randomMicrograph()
                   if (background.getContext)
                   {
                       background.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-                      background.getContext('2d').drawImage(micrograph, 0, 0);
+                      background.getContext('2d').drawImage(micrograph, 0, 0, canvas.width, canvas.height);
                   }
               }
               micrograph.src = "../" + response.micrograph;
