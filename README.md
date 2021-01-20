@@ -164,3 +164,15 @@ If you want to start afresh, i.e. delete the micrograph database and any labels,
 ```bash
 PROOF_CLEAN_START=1 docker-compose up -d
 ```
+
+On Windows you would need to do the following (assuming PowerShell):
+
+```powershell
+$env:PROOF_CLEAN_START=1; docker-compose up -d
+```
+
+Then remove the environment variable when you're done:
+
+```powershell
+Remove-Item Env:\PROOF_CLEAN_START
+```
