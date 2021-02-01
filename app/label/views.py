@@ -107,8 +107,11 @@ def average(request):
     # Initialise response dictionary.
     response = {}
 
-    # Call the Celery task to generate the average mask.
-    response["average"] = create_average_mask.delay(index, average)
+    logger.info(f"Generating average for image {index}")
+
+    # Call the Celery task to generate the average mask. Don't delay since we
+    # require that this task is run before we can return a response.
+    response["average"] = create_average_mask(index, average)
 
     return JsonResponse(response)
 
