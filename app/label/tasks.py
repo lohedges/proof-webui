@@ -83,10 +83,6 @@ def process_micrograph_mask(ip, index, data_url, svg_serialized):
         img_array = image.flatten() / 255
         avg_array = (current_average/micrograph.num_labels).flatten() / 255
 
-        # Work out the "similarity" for this mask.
-        similarity = sum((img_array-avg_array)**2) / len(img_array)
-        micrograph.similarity += similarity
-
         # Update the running average.
         image += current_average
 
