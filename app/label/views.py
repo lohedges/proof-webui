@@ -52,7 +52,7 @@ def micrograph(request):
     while ip in micrograph.ip_addresses and num_attempts < 100*num_micrographs:
         index = randint(0, num_micrographs-1)
         micrograph = micrographs[randint(0, index)]
-        num_attemps += 1
+        num_attempts += 1
 
     # Insert the micrograph, index, and IP address into the response.
     response["micrograph"] = micrograph.path
