@@ -9,6 +9,7 @@ services:
     env_file: &envfile
       - env.env
     environment:
+      PROOF_LOCAL: ${PROOF_LOCAL}
       PROOF_CLEAN_START: ${PROOF_CLEAN_START}
     user: "${UID}:${GID}"
     ports:
