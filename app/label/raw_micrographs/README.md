@@ -9,5 +9,5 @@ python label/script/pre_process_micrographs.py
 
 (This assumed that you are in the `app` directory.)
 
-The script will be run automatically if user the Docker version of the
+The script will be run automatically if using the Docker version of the
 labelling app.
