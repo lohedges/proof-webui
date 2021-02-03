@@ -1,7 +1,8 @@
-# Micrographs
+# Raw micrographs
 
-Place your raw MRC micrographs in this directory. These can be pre-processed
-for web use by running:
+Place your raw [MRC](https://en.wikipedia.org/wiki/MRC_(file_format))
+micrographs in this directory. These can be pre-processed for web use by
+running:
 
 ```python
 python label/script/pre_process_micrographs.py
