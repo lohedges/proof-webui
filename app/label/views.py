@@ -19,6 +19,12 @@ from .tasks import create_average_mask, process_micrograph_mask
 
 logger = logging.getLogger(__name__)
 
+# Determine whether proof is being run locally.
+if os.environ.get("PROOF_LOCAL") != None:
+    proof_local = True
+else:
+    proof_local = False
+
 def index(request):
     """
     Render the labeller landing page.
@@ -85,7 +91,10 @@ def upload(request):
     svg_serialized = request.GET.get("svgSerialized")
 
     # Call the Celery task to process the upload.
-    process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
+    if proof_local:
+        process_micrograph_mask(ip, int(index), data_url, svg_serialized)
+    else:
+        process_micrograph_mask.delay(ip, int(index), data_url, svg_serialized)
 
     # Dummy response for now.
     response = {}
@@ -101,19 +110,28 @@ def average(request):
     # Get the index of the current micrograph.
     index = request.GET.get("index")
 
-    # Get the name of the current average image.
-    average = request.GET.get("average")
+    # Index is set to -1 if labelling is complete.
+    if int(index) >= 0:
 
-    # Initialise response dictionary.
-    response = {}
+        # Get the name of the current average image.
+        average = request.GET.get("average")
 
-    logger.info(f"Generating average for image {index}")
+        # Initialise response dictionary.
+        response = {}
 
-    # Call the Celery task to generate the average mask. Don't delay since we
-    # require that this task is run before we can return a response.
-    response["average"] = create_average_mask(index, average)
+        logger.info(f"Generating average for image {index}")
 
-    return JsonResponse(response)
+        # Call the Celery task to generate the average mask. Don't delay since we
+        # require that this task is run before we can return a response.
+        if proof_local:
+            response["average"] = create_average_mask(int(index), average)
+        else:
+            response["average"] = create_average_mask.delay(int(index), average)
+
+        return JsonResponse(response)
+
+    else:
+        return JsonResponse({"average" : "NULL"})
 
 def _get_ip_addresss(request):
     """
