@@ -157,7 +157,7 @@ To run the filament labeller withing a Docker container, simply run:
 docker-compose up -d
 ```
 
-On Linux/macOS you can run as a your regular user with:
+On Linux/macOS you can run as your regular user with:
 
 ```bash
 UID=$(id -u) GID=$(id -g) docker-compose up -d
