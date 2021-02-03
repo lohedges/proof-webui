@@ -37,75 +37,78 @@ def process_micrograph_mask(ip, index, data_url, svg_serialized):
         The serialized SVG image.
     """
 
-    # Get the micrograph from the database.
-    micrograph = Micrograph.objects.get(id=str(index))
+    # Index is set to -1 if labelling is complete.
+    if index >= 0:
 
-    # Get the name of the micrograph with no path or extension.
-    name = micrograph.path.split("/")[2].split(".")[0]
+        # Get the micrograph from the database.
+        micrograph = Micrograph.objects.get(id=str(index))
 
-    # Increment the number of micrograph labels.
-    micrograph.num_labels += 1
+        # Get the name of the micrograph with no path or extension.
+        name = micrograph.path.split("/")[2].split(".")[0]
 
-    # Record that this IP address has labelled the micrograph. The IP address
-    # can appear multiple times if they have labelled all of the current m#icrographs.
-    micrograph.ip_addresses.append(ip)
+        # Increment the number of micrograph labels.
+        micrograph.num_labels += 1
 
-    # Create the directory name for the masks.
-    mask_dir = f"label/masks/{name}"
+        # Record that this IP address has labelled the micrograph. The IP address
+        # can appear multiple times if they have labelled all of the current m#icrographs.
+        micrograph.ip_addresses.append(ip)
 
-    # Create a mask directory for this micrograph if it doesn't already exist.
-    if not os.path.isdir(mask_dir):
-        os.makedirs(mask_dir)
+        # Create the directory name for the masks.
+        mask_dir = f"label/masks/{name}"
 
-    # Create name of the micrograph label mask.
-    mask_name = f"{mask_dir}/" + f"{micrograph.num_labels}".rjust(6, "0")
+        # Create a mask directory for this micrograph if it doesn't already exist.
+        if not os.path.isdir(mask_dir):
+            os.makedirs(mask_dir)
 
-    # Decode the image, convert to grayscale and threshold to create a binary iamge.
-    image = Image.open(BytesIO(base64.b64decode(data_url.split(",")[1])))
-    image = image.convert("L")
-    image = image.point(lambda x: 0 if x>10 else 255, "1")
-    image.save(mask_name + ".png")
+        # Create name of the micrograph label mask.
+        mask_name = f"{mask_dir}/" + f"{micrograph.num_labels}".rjust(6, "0")
 
-    # Write the SVG to file.
-    with open(mask_name + ".svg", "w") as f:
-        f.write(svg_serialized)
+        # Decode the image, convert to grayscale and threshold to create a binary iamge.
+        image = Image.open(BytesIO(base64.b64decode(data_url.split(",")[1])))
+        image = image.convert("L")
+        image = image.point(lambda x: 0 if x>10 else 255, "1")
+        image.save(mask_name + ".png")
 
-    # Reload the mask as a NumPy array. Make sure this is a 64-bit int since
-    # we'll be accumulating the data, i.e. it will go beyond the range of 0-255.
-    image = imageio.imread(mask_name + ".png").astype("uint64")
+        # Write the SVG to file.
+        with open(mask_name + ".svg", "w") as f:
+            f.write(svg_serialized)
 
-    # Add to the running average.
-    if micrograph.num_labels > 1:
-        # Get the current average.
-        current_average = pickle.loads(base64.b64decode(micrograph.average))
+        # Reload the mask as a NumPy array. Make sure this is a 64-bit int since
+        # we'll be accumulating the data, i.e. it will go beyond the range of 0-255.
+        image = imageio.imread(mask_name + ".png").astype("uint64")
 
-        # Convert images to one-dimensional NumPy arrays in range 0 to 1.
-        img_array = image.flatten() / 255
-        avg_array = (current_average/micrograph.num_labels).flatten() / 255
+        # Add to the running average.
+        if micrograph.num_labels > 1:
+            # Get the current average.
+            current_average = pickle.loads(base64.b64decode(micrograph.average))
 
-        # Update the running average.
-        image += current_average
+            # Convert images to one-dimensional NumPy arrays in range 0 to 1.
+            img_array = image.flatten() / 255
+            avg_array = (current_average/micrograph.num_labels).flatten() / 255
 
-    # Serialize the image and convert to base64.
-    image_bytes = pickle.dumps(image)
-    image_bytes = base64.b64encode(image_bytes)
+            # Update the running average.
+            image += current_average
 
-    # Store the updated average.
-    micrograph.average = image_bytes
+        # Serialize the image and convert to base64.
+        image_bytes = pickle.dumps(image)
+        image_bytes = base64.b64encode(image_bytes)
 
-    try:
-        # Save the updated micrograph record.
-        micrograph.save()
+        # Store the updated average.
+        micrograph.average = image_bytes
 
-        # Log that a the micrograph was updated.
-        logger.info(f"Successfully updated record for micrograph '{name}'")
+        try:
+            # Save the updated micrograph record.
+            micrograph.save()
 
-    except:
-        # Log that a concurrency issue occurred.
-        logger.warning(f"Database concurrency issue for micrograph '{name}'")
+            # Log that a the micrograph was updated.
+            logger.info(f"Successfully updated record for micrograph '{name}'")
 
-        # Re-execute the task if the record has been modified.
-        process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
+        except:
+            # Log that a concurrency issue occurred.
+            logger.warning(f"Database concurrency issue for micrograph '{name}'")
+
+            # Re-execute the task if the record has been modified.
+            process_micrograph_mask.delay(ip, index, data_url, svg_serialized)
 
 @app.task
 def create_average_mask(index, average):
@@ -136,7 +139,7 @@ def create_average_mask(index, average):
     micrograph = Micrograph.objects.get(pk=index)
 
     # Only process average if a label has been uploaded.
-    if micrograph.num_labels > 0:
+    if micrograph.num_labels >= 0:
         # Load the current average label.
         current_average = pickle.loads(base64.b64decode(micrograph.average))
         current_average = (current_average / micrograph.num_labels).astype("uint8")
