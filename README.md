@@ -33,9 +33,22 @@ systemctl start rabbitmq
 
 ### Micrographs
 
-No micrographs are provided with this repository. Place any of interest in
-the `label/static/micrographs` directory. For now, it is assumed that these
-are [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics) format.
+No micrographs are provided with this repository. You can place raw
+[MRC](https://en.wikipedia.org/wiki/MRC_(file_format)) files in the
+`label/raw_micrographs` directory, then run:
+
+```bash
+venv_proof/bin/python label/scripts/pre_process_micrographs.py
+```
+
+(This script is run automatically when using the [Docker](#Docker) version of
+the app.)
+
+This will perform [histogram equalisation](https://en.wikipedia.org/wiki/Histogram_equalization)
+on the images then convert them to [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics)
+format and re-scale them for web use. The output images will be located in the
+`label/static/micrographs` directory. (If you already have properly formatted
+PNG files, then you can directly place them in the this directory.)
 
 ### Initialising Django
 
@@ -78,6 +91,14 @@ returned.
 
 ```bash
 venv_proof/bin/python manage.py runserver
+```
+
+If you are running the app locally as a single user, then you might want to
+run the server in _local_ mode to ensure that all tasks are run synchronously.
+To do so, run:
+
+```bash
+PROOF_LOCAL=1 venv_proof/bin/python manage.py runserver
 ```
 
 The default URL is [http://127.0.0.1:8000](http://127.0.0.1:8000), which,
@@ -165,7 +186,13 @@ If you want to start afresh, i.e. delete the micrograph database and any labels,
 PROOF_CLEAN_START=1 docker-compose up -d
 ```
 
-On Windows you would need to do the following (assuming PowerShell):
+To run in _local_ mode:
+
+```bash
+PROOF_LOCAL=1 docker-compose up -d
+```
+
+To use environment variables on Windows you would need to do the following (assuming PowerShell):
 
 ```powershell
 $env:PROOF_CLEAN_START=1; docker-compose up -d
