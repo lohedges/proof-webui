@@ -3,5 +3,7 @@ django
 django-concurrency
 django-mysql
 imageio
+mrcfile
 numpy
 pillow
+scikit-image
