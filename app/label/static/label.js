@@ -144,12 +144,11 @@ function upload(canvas, ctx)
           },
           function(response)
           {
+            clearAll(canvas, ctx, true);
+            clearAll(canvas, svg_ctx, true);
+            randomMicrograph();
           }
     );
-
-    clearAll(canvas, ctx, true);
-    clearAll(canvas, svg_ctx, true);
-    randomMicrograph();
 }
 
 // Load a random micrograph.
