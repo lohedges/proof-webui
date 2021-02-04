@@ -30,6 +30,9 @@ micrographs = glob.glob(f"{micrograph_directory}/*.mrc")
 
 # Pre-process all of the micrographs.
 for idx, micrograph in enumerate(micrographs):
+    filename = os.path.basename(micrograph)
+    print(f"Processing micrograph: {filename}")
+
     with mrcfile.open(micrograph, permissive=True) as mrc:
         h = mrc.header
         d = mrc.data
@@ -38,5 +41,5 @@ for idx, micrograph in enumerate(micrographs):
     normalised = skimage.img_as_ubyte(d)
     resized = transform.resize(normalised, (800, 800))
 
-    filename = os.path.basename(micrograph).split(".")[0]
+    filename = filename.split(".")[0]
     io.imsave(f"label/static/micrographs/{filename}.png", resized)
