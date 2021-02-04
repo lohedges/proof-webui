@@ -42,4 +42,4 @@ for idx, micrograph in enumerate(micrographs):
     resized = transform.resize(normalised, (800, 800))
 
     filename = filename.split(".")[0]
-    io.imsave(f"label/static/micrographs/{filename}.png", resized)
+    io.imsave(f"label/static/micrographs/{filename}.png", skimage.img_as_ubyte(resized))
