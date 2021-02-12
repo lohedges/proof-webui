@@ -131,7 +131,7 @@ different drawing modes are provided:
 * Freehand mode allows you to trace the path of a filament by pressing and
 holding the left mouse button. The path is finished when the button is
 lifted.
-* Line modes allows filaments to be labelled via piecewise linear line segments.
+* Line mode allows filaments to be labelled via piecewise linear line segments.
 Pressing the right mouse button activates this mode and drops the first line
 marker. Right-clicking on another location will then draw a line from the last
 marker. Simpy repeat the process until the filament is labelled. Left-clicking
