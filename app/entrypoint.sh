@@ -5,6 +5,7 @@ if ! [ -z ${PROOF_CLEAN_START+x} ]; then
     rm db.sqlite3
     rm celery*
     rm -r label/masks
+    rm label/static/micrographs/*.png
     find . -path "label/migrations/*.py" -not -name "__init__.py" -delete
     find . -path "label/migrations/*.pyc" -delete
 fi
