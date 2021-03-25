@@ -137,7 +137,7 @@ function upload(canvas, ctx)
     // Serialize the SVG.
     svgSerialized = (svg_ctx.getSerializedSvg(true));
 
-    $.get('/label/upload',
+    $.post('/label/upload',
           { index: micrograph.index,
             dataUrl: dataUrl,
             svgSerialized: svgSerialized

@@ -94,16 +94,16 @@ def upload(request):
     ip = _get_ip_addresss(request)
 
     # Get the index of the micrograph.
-    index = request.GET.get("index")
+    index = request.POST.get("index")
 
     # Log the the micrograph is being processed.
     logger.info(f"Processing micrograph index {index} from IP {ip}")
 
     # Get the dataURL.
-    data_url = request.GET.get("dataUrl")
+    data_url = request.POST.get("dataUrl")
 
     # Get the serialized SVG image.
-    svg_serialized = request.GET.get("svgSerialized")
+    svg_serialized = request.POST.get("svgSerialized")
 
     # Call the Celery task to process the upload.
     if proof_local:
@@ -153,7 +153,7 @@ def _get_ip_addresss(request):
     Helper function to get the IP address of the client
     making the GET request.
     """
-    if request.method == "GET":
+    if request.method in ["GET", "POST"]:
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
             ip = x_forwarded_for.split(",")[-1].strip()
