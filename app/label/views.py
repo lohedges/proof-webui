@@ -104,7 +104,9 @@ def upload(request):
     # Get the serialized SVG image.
     svg_serialized = request.POST.get("svgSerialized")
 
-    # Call the Celery task to process the upload.
+    # Call the Celery task to process the upload. Don't delay if running
+    # locally since we require that this task is run before we can
+    # return a response.
     if proof_local:
         process_micrograph_mask(ip, int(index), data_url, svg_serialized)
     else:
@@ -135,8 +137,9 @@ def average(request):
 
         logger.info(f"Generating average for image {index}")
 
-        # Call the Celery task to generate the average mask. Don't delay since we
-        # require that this task is run before we can return a response.
+        # Call the Celery task to generate the average mask. Don't delay if
+        # running locally since we require that this task is run before we can
+        # return a response.
         if proof_local:
             response["average"] = create_average_mask(int(index), average)
         else:
