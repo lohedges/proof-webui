@@ -53,21 +53,19 @@ def micrograph(request):
     micrograph = micrographs[randint(0, index)]
 
     # Whether labelling is finished for this IP address.
-    is_finished = False
+    is_finished = True
 
     # Make sure that the micrograph hasn't already been labelled by this IP.
     # Only try this a maximum of 100*num_micrographs times. We could store
     # IP addresses as a separate model and log the micrographs that have been
     # labelled by each IP, but this will suffice.
     num_attempts = 1
-    while ip in micrograph.ip_addresses and num_attempts < 100*num_micrographs:
+    for x in range(0, 100*num_micrographs):
         index = randint(0, num_micrographs-1)
-        micrograph = micrographs[randint(0, index)]
-        num_attempts += 1
-
-    # The while loop terminated.
-    if num_attempts == 100*num_micrographs:
-        is_finished = True
+        micrograph = micrographs[index]
+        if not ip in micrograph.ip_addresses:
+            is_finished = False
+            break
 
     # Insert the micrograph, index, and IP address into the response.
     if not is_finished:
