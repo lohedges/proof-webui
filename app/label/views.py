@@ -64,7 +64,6 @@ def micrograph(request):
         index = randint(0, num_micrographs-1)
         micrograph = micrographs[randint(0, index)]
         num_attempts += 1
-        is_finished = False
 
     # The while loop terminated.
     if num_attempts == 100*num_micrographs:
