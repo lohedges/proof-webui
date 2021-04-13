@@ -145,13 +145,13 @@ Errors can be corrected by clicking "Clear last label" or "Clear all labels".
 Clicking "Toggle average" will show the average label for the micrograph,
 averaged over all masks that have been uploaded. (Note that nothing will be
 shown if the micrograph has not yet been labelled.) If you don't want to label
-the current micrograph, simply click "New micrograph" to get another random
+the current micrograph then click "New micrograph" to get another random
 micrograph. Finally, to upload a completed micgrograph label, click on
 "Upload labels".
 
 # Docker
 
-To run the filament labeller withing a Docker container, simply run:
+To run the filament labeller withing a Docker container, run:
 
 ```bash
 docker-compose up -d
