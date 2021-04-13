@@ -48,7 +48,7 @@ This will perform [histogram equalisation](https://en.wikipedia.org/wiki/Histogr
 on the images then convert them to [PNG](https://en.wikipedia.org/wiki/Portable_Network_Graphics)
 format and re-scale them for web use. The output images will be located in the
 `label/static/micrographs` directory. (If you already have properly formatted
-PNG files, then you can directly place them in the this directory.)
+PNG files, then you can directly place them in this directory.)
 
 ### Initialising Django
 
@@ -134,8 +134,8 @@ lifted.
 * Line mode allows filaments to be labelled via piecewise linear line segments.
 Pressing the right mouse button activates this mode and drops the first line
 marker. Right-clicking on another location will then draw a line from the last
-marker. Simpy repeat the process until the filament is labelled. Left-clicking
-will finish drawing and register the label.
+marker. Repeat the process until the filament is labelled. Left-clicking will
+finish drawing and register the label.
 
 It is possible to change the line width using the slider on the left-hand
 panel. The width is applied to the last filament that was drawn, allowing
